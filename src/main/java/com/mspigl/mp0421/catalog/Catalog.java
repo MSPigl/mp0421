@@ -45,4 +45,22 @@ public class Catalog {
             this.items.put(item.getToolType(), item);
         }
     }
+
+    /**
+     * Get the catalog item for the input tool type
+     * @param toolType the requested tool type
+     * @return the catalog item matching the input tool type, null if not found
+     */
+    public CatalogItem getCatalogItem(String toolType) {
+        return items.get(toolType);
+    }
+
+    /**
+     * Get the tool for the input tool code
+     * @param toolCode the requested tool code
+     * @return the tool matching the input tool code, null if not found
+     */
+    public Tool getTool(String toolCode) {
+        return tools.get(toolCode);
+    }
 }
