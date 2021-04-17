@@ -4,9 +4,12 @@ import com.mspigl.mp0421.catalog.Catalog;
 import com.mspigl.mp0421.catalog.CatalogItem;
 import com.mspigl.mp0421.tool.Tool;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAdjusters;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,6 +80,65 @@ public class Store {
     }
 
     /**
+     * Determine if the input day is chargeable
+     * @param day the day to test if chargeable
+     * @param catalogItem the catalog item to compare against the day
+     * @return whether the input day is chargeable
+     */
+    boolean isChargeDay(LocalDate day, CatalogItem catalogItem) {
+        boolean isChargeDay;
+
+        DayOfWeek dayOfWeek = day.getDayOfWeek();
+        boolean isWeekend = dayOfWeek.equals(DayOfWeek.SATURDAY) || dayOfWeek.equals(DayOfWeek.SUNDAY);
+
+        if (isHoliday(day)) {
+            isChargeDay = catalogItem.getHolidayChargeable();
+        } else if (isWeekend) {
+            isChargeDay = catalogItem.getWeekendChargeable();
+        } else {
+            isChargeDay = catalogItem.getWeekdayChargeable();
+        }
+
+        return isChargeDay;
+    }
+
+    /**
+     * Determine if the input day is a holiday. Valid holidays are Independence Day (July 4th,
+     * observed July 3rd if 4th is a Saturday, July 5th if Sunday) and Labor Day (first Monday
+     * of September)
+     * @param day the day to test
+     * @return whether the input day is a holiday
+     */
+    boolean isHoliday(LocalDate day) {
+        boolean isHoliday;
+
+        Month month = day.getMonth();
+
+        if (month.equals(Month.JULY)) {
+            LocalDate independenceDay = LocalDate.of(day.getYear(), Month.JULY, 4);
+            LocalDate independenceDayObserved;
+
+            if (independenceDay.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+                independenceDayObserved = independenceDay.minusDays(1);
+            } else if (independenceDay.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+                independenceDayObserved = independenceDay.plusDays(1);
+            } else {
+                independenceDayObserved = independenceDay;
+            }
+
+            isHoliday = day.getDayOfMonth() == independenceDayObserved.getDayOfMonth();
+        } else if (month.equals(Month.SEPTEMBER)) {
+            LocalDate laborDay = day.with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY));
+
+            isHoliday = day.getDayOfMonth() == laborDay.getDayOfMonth();
+        } else {
+            isHoliday = false;
+        }
+
+        return isHoliday;
+    }
+
+    /**
      * Validate that the the input tool code has a corresponding entry in the store catalog,
      * the rental day count is greater than zero, the discount percent is in the range [0, 100]
      * (inclusive) and that the checkout date is valid
@@ -130,16 +192,5 @@ public class Store {
         if (!dateValid) {
             throw new IllegalArgumentException(INVALID_CHECKOUT_DATE_ERROR_MESSAGE);
         }
-    }
-
-    /**
-     * Determine if the input day is chargeable
-     * @param day the day to test if chargeable
-     * @param catalogItem the catalog item to compare against the day
-     * @return whether the input day is chargeable
-     */
-    private boolean isChargeDay(LocalDate day, CatalogItem catalogItem) {
-        // TODO: Implement
-        return false;
     }
 }

@@ -7,30 +7,30 @@ public class CatalogItem {
 
     private String toolType;
     private double dailyCharge;
-    private boolean weekdayCharge;
-    private boolean weekendCharge;
-    private boolean holidayCharge;
+    private boolean weekdayChargeable;
+    private boolean weekendChargeable;
+    private boolean holidayChargeable;
 
     /**
      * Construct a CatalogItem instance
      * @param toolType the item's tool type
      * @param dailyCharge the item's daily charge
-     * @param weekdayCharge whether the tool accrues charges on weekdays
-     * @param weekendCharge whether the tool accrues charges on weekends
-     * @param holidayCharge whether the tool accrues charges on holidays
+     * @param weekdayChargeable whether the tool accrues charges on weekdays
+     * @param weekendChargeable whether the tool accrues charges on weekends
+     * @param holidayChargeable whether the tool accrues charges on holidays
      */
     public CatalogItem(
             String toolType,
             double dailyCharge,
-            boolean weekdayCharge,
-            boolean weekendCharge,
-            boolean holidayCharge
+            boolean weekdayChargeable,
+            boolean weekendChargeable,
+            boolean holidayChargeable
     ) {
         this.toolType = toolType;
         this.dailyCharge = dailyCharge;
-        this.weekdayCharge = weekdayCharge;
-        this.weekendCharge = weekendCharge;
-        this.holidayCharge = holidayCharge;
+        this.weekdayChargeable = weekdayChargeable;
+        this.weekendChargeable = weekendChargeable;
+        this.holidayChargeable = holidayChargeable;
     }
 
     public String getToolType() {
@@ -49,27 +49,27 @@ public class CatalogItem {
         this.dailyCharge = dailyCharge;
     }
 
-    public boolean isWeekdayCharge() {
-        return weekdayCharge;
+    public boolean getWeekdayChargeable() {
+        return weekdayChargeable;
     }
 
-    public void setWeekdayCharge(boolean weekdayCharge) {
-        this.weekdayCharge = weekdayCharge;
+    public void setWeekdayChargeable(boolean weekdayChargeable) {
+        this.weekdayChargeable = weekdayChargeable;
     }
 
-    public boolean isWeekendCharge() {
-        return weekendCharge;
+    public boolean getWeekendChargeable() {
+        return weekendChargeable;
     }
 
-    public void setWeekendCharge(boolean weekendCharge) {
-        this.weekendCharge = weekendCharge;
+    public void setWeekendChargeable(boolean weekendChargeable) {
+        this.weekendChargeable = weekendChargeable;
     }
 
-    public boolean isHolidayCharge() {
-        return holidayCharge;
+    public boolean getHolidayChargeable() {
+        return holidayChargeable;
     }
 
-    public void setHolidayCharge(boolean holidayCharge) {
-        this.holidayCharge = holidayCharge;
+    public void setHolidayChargeable(boolean holidayChargeable) {
+        this.holidayChargeable = holidayChargeable;
     }
 }
