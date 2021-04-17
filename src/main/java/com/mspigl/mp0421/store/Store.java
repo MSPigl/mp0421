@@ -5,6 +5,7 @@ import com.mspigl.mp0421.catalog.CatalogItem;
 import com.mspigl.mp0421.tool.Tool;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +47,31 @@ public class Store {
     ) {
         this.validateCheckoutInput(toolCode, rentalDayCount, discountPercent, checkoutDate);
 
+        Tool toolToRent = catalog.getTool(toolCode);
+        CatalogItem toolToRentCatalogItem = catalog.getCatalogItem(toolToRent.getType());
+        LocalDate localDate = LocalDate.parse(checkoutDate);
+        int chargeDays = 0;
+
+        for (int i = 0; i < rentalDayCount; i++) {
+            localDate = localDate.plusDays(1);
+
+            if (isChargeDay(localDate, toolToRentCatalogItem)) {
+                chargeDays++;
+            }
+        }
+
         RentalAgreement rentalAgreement = new RentalAgreement();
+        rentalAgreement.setRentalDays(rentalDayCount);
+        rentalAgreement.setDiscountPercent(discountPercent);
+        rentalAgreement.setCheckoutDate(checkoutDate);
+        rentalAgreement.setToolCode(toolToRent.getCode());
+        rentalAgreement.setToolType(toolToRent.getType());
+        rentalAgreement.setToolBrand(toolToRent.getBrand());
+        rentalAgreement.setDailyCharge(toolToRentCatalogItem.getDailyCharge());
+        rentalAgreement.setChargeDays(chargeDays);
+        rentalAgreement.setDueDate(
+                localDate.format(DateTimeFormatter.ofPattern("M/d/y")) // TODO: finalize format
+        );
 
         return rentalAgreement;
     }
@@ -105,5 +130,16 @@ public class Store {
         if (!dateValid) {
             throw new IllegalArgumentException(INVALID_CHECKOUT_DATE_ERROR_MESSAGE);
         }
+    }
+
+    /**
+     * Determine if the input day is chargeable
+     * @param day the day to test if chargeable
+     * @param catalogItem the catalog item to compare against the day
+     * @return whether the input day is chargeable
+     */
+    private boolean isChargeDay(LocalDate day, CatalogItem catalogItem) {
+        // TODO: Implement
+        return false;
     }
 }

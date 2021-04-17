@@ -15,6 +15,12 @@ public class RentalAgreement {
     private int discountPercent;
     private double dailyCharge;
 
+    @Override
+    public String toString() {
+        // TODO: Implement
+        return super.toString();
+    }
+
     /**
      * Get the pre-discount charge (the product of the number of charge days
      * and the daily charge rate rounded half up to cents)
