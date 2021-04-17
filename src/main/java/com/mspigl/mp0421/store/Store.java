@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class representing a store that tools can be rented from
+ * Class representing a store from which tools can be rented
  */
 public class Store {
 
