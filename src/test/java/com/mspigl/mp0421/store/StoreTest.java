@@ -17,6 +17,30 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class StoreTest {
 
+    /**
+     * Store instance to use for spec acceptance tests
+     */
+    private static final Store SPEC_STORE;
+
+    static {
+        List<Tool> tools = Arrays.asList(
+                new Tool("LADW", "Werner", "Ladder"),
+                new Tool("CHNS", "Stihl", "Chainsaw"),
+                new Tool("JAKR", "Ridgid", "Jackhammer"),
+                new Tool("JAKD", "DeWalt", "Jackhammer")
+        );
+
+        List<CatalogItem> items = Arrays.asList(
+                new CatalogItem("Ladder", 1.99, true, true, false),
+                new CatalogItem("Chainsaw", 1.49, true, false, true),
+                new CatalogItem("Jackhammer", 2.99, true, false, false)
+        );
+
+        SPEC_STORE = new Store(new Catalog(tools, items));
+    }
+
+    /* SANITY TESTS */
+
     @Test
     void should_throwException_when_checkoutWithToolNotInCatalog() {
         List<Tool> tools = Arrays.asList(
@@ -179,5 +203,41 @@ class StoreTest {
         CatalogItem catalogItem = new CatalogItem("type", 0, true, true, false);
 
         assertFalse(Store.isChargeableDay(july4, catalogItem));
+    }
+
+    /* SPEC TESTS */
+
+    /**
+     * The passed in discount (101) is outside of the valid range, so an exception is thrown
+     */
+    @Test
+    void spec_1_should_throwException() {
+        try {
+            SPEC_STORE.checkout("JAKR", 5, 101, "9/3/15");
+        } catch (IllegalArgumentException e) {
+            assertEquals(Store.INVALID_DISCOUNT_ERROR_MESSAGE, e.getMessage());
+        }
+    }
+
+    /**
+     * The rental days are 7/3/20, 7/4/20 and 7/5/20.
+     * 7/3/20 is Independence Day observed because the 4th is a Saturday,
+     * and ladders are not charged on holidays, so 7/3/20 doesn't add to the total.
+     * 7/4/20 is a weekend (not a holiday) since Independence Day was observed the day
+     * before, ladders are charged on weekends so 7/4/20 adds to the total.
+     * 7/5/20 is a weekend, ladders are charged on weekends so 7/5/20 adds  to the total.
+     *
+     * 2 chargeable days * 1.99 per day = 3.98 before discount.
+     * 3.98 * .1 = .40 discount
+     * 3.98 - .4 = 3.58 final charge
+     */
+    @Test
+    void spec_2_shouldGenerateRentalAgreement() {
+        RentalAgreement rentalAgreement = SPEC_STORE.checkout("LADW", 3, 10, "7/2/20");
+
+        assertEquals(3.98, rentalAgreement.getPreDiscountCharge());
+        assertEquals(.40, rentalAgreement.getDiscountAmount());
+        assertEquals(3.58, rentalAgreement.getFinalCharge());
+        assertEquals("07/05/20", rentalAgreement.getDueDate());
     }
 }

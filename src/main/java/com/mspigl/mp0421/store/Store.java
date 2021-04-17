@@ -111,7 +111,7 @@ public class Store {
 
         Tool toolToRent = catalog.getTool(toolCode);
         CatalogItem toolToRentCatalogItem = catalog.getCatalogItem(toolToRent.getType());
-        LocalDate localDate = LocalDate.parse(checkoutDate);
+        LocalDate localDate = LocalDate.parse(checkoutDate, DateTimeFormatter.ofPattern("M/d/y"));
         int chargeDays = 0;
 
         for (int i = 0; i < rentalDayCount; i++) {
@@ -132,7 +132,7 @@ public class Store {
         rentalAgreement.setDailyCharge(toolToRentCatalogItem.getDailyCharge());
         rentalAgreement.setChargeDays(chargeDays);
         rentalAgreement.setDueDate(
-                localDate.format(DateTimeFormatter.ofPattern("M/d/y")) // TODO: finalize format
+                localDate.format(DateTimeFormatter.ofPattern("MM/dd/y"))
         );
 
         return rentalAgreement;
@@ -183,7 +183,7 @@ public class Store {
 
         if (dateValid) {
             try {
-                LocalDate.parse(checkoutDate);
+                LocalDate.parse(checkoutDate, DateTimeFormatter.ofPattern("M/d/y"));
             } catch (DateTimeParseException e) {
                 dateValid = false;
             }
