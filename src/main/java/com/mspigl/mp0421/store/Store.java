@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class Store {
 
     static final String TOOL_NOT_IN_CATALOG_ERROR_MESSAGE = "The tool requested at checkout is not present in our catalog.";
-    static final String INVALID_RENTAL_DAY_COUNT_ERROR_MESSAGE = "A tool must be rented for one or more days.";
+    static final String INVALID_RENTAL_DAY_COUNT_ERROR_MESSAGE = "A tool must be rented for at least one day.";
     static final String INVALID_DISCOUNT_ERROR_MESSAGE = "Applied discount must be in the range 0 - 100 (inclusive)";
     static final String INVALID_CHECKOUT_DATE_ERROR_MESSAGE = "The checkout date must be a valid date in a valid format";
 
@@ -32,20 +32,20 @@ public class Store {
      * @return whether the input day is chargeable
      */
     static boolean isChargeableDay(LocalDate day, CatalogItem catalogItem) {
-        boolean isChargeDay;
+        boolean isChargeableDay;
 
         DayOfWeek dayOfWeek = day.getDayOfWeek();
         boolean isWeekend = dayOfWeek.equals(DayOfWeek.SATURDAY) || dayOfWeek.equals(DayOfWeek.SUNDAY);
 
         if (isHoliday(day)) {
-            isChargeDay = catalogItem.getHolidayChargeable();
+            isChargeableDay = catalogItem.getHolidayChargeable();
         } else if (isWeekend) {
-            isChargeDay = catalogItem.getWeekendChargeable();
+            isChargeableDay = catalogItem.getWeekendChargeable();
         } else {
-            isChargeDay = catalogItem.getWeekdayChargeable();
+            isChargeableDay = catalogItem.getWeekdayChargeable();
         }
 
-        return isChargeDay;
+        return isChargeableDay;
     }
 
     /**
