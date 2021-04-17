@@ -125,7 +125,6 @@ public class Store {
         RentalAgreement rentalAgreement = new RentalAgreement();
         rentalAgreement.setRentalDays(rentalDayCount);
         rentalAgreement.setDiscountPercent(discountPercent);
-        rentalAgreement.setCheckoutDate(checkoutDate);
         rentalAgreement.setToolCode(toolToRent.getCode());
         rentalAgreement.setToolType(toolToRent.getType());
         rentalAgreement.setToolBrand(toolToRent.getBrand());
@@ -133,6 +132,10 @@ public class Store {
         rentalAgreement.setChargeDays(chargeDays);
         rentalAgreement.setDueDate(
                 localDate.format(DateTimeFormatter.ofPattern("MM/dd/y"))
+        );
+        rentalAgreement.setCheckoutDate(
+                LocalDate.parse(checkoutDate, DateTimeFormatter.ofPattern("M/d/y"))
+                    .format(DateTimeFormatter.ofPattern("MM/dd/y"))
         );
 
         return rentalAgreement;

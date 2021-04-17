@@ -1,5 +1,8 @@
 package com.mspigl.mp0421.store;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 /**
  * Class representing a rental agreement for a tool
  */
@@ -15,10 +18,47 @@ public class RentalAgreement {
     private int discountPercent;
     private double dailyCharge;
 
+    /**
+     * Output all fields and calculated amounts as a string
+     * @return all fields/amounts as a string
+     */
     @Override
     public String toString() {
-        // TODO: Implement
-        return super.toString();
+        return "Tool code: " +
+                toolCode +
+                "\n" +
+                "Tool type: " +
+                toolType +
+                "\n" +
+                "Tool brand: " +
+                toolBrand +
+                "\n" +
+                "Rental days: " +
+                rentalDays +
+                "\n" +
+                "Checkout date: " +
+                checkoutDate +
+                "\n" +
+                "Due date: " +
+                dueDate +
+                "\n" +
+                "Daily rental charge: " +
+                formatCurrency(dailyCharge) +
+                "\n" +
+                "Charge days: " +
+                chargeDays +
+                "\n" +
+                "Pre-discount charge: " +
+                formatCurrency(getPreDiscountCharge()) +
+                "\n" +
+                "Discount percent: " +
+                discountPercent +
+                "%\n" +
+                "Discount amount: " +
+                formatCurrency(getDiscountAmount()) +
+                "\n" +
+                "Final charge: " +
+                formatCurrency(getFinalCharge());
     }
 
     /**
@@ -124,5 +164,16 @@ public class RentalAgreement {
 
     public void setDailyCharge(double dailyCharge) {
         this.dailyCharge = dailyCharge;
+    }
+
+    /**
+     * Format the input amount into USD
+     * @param amount the amount to format
+     * @return a currency string representing the formatted amount
+     */
+    private String formatCurrency(double amount) {
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("en", "US"));
+
+        return numberFormat.format(amount);
     }
 }

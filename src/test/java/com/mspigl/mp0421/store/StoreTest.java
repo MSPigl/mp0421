@@ -325,4 +325,29 @@ class StoreTest {
         assertEquals(1.49, rentalAgreement.getFinalCharge());
         assertEquals("07/06/20", rentalAgreement.getDueDate());
     }
+
+    /**
+     * The rental days are 7/3/21 - 7/9/21 (inclusive)
+     * 7/3/21 is a weekend, chainsaws are not charged on weekends, so it doesn't add to the total
+     * 7/4/21 is a weekend since Independence Day is observed on the following day. Chainsaws are
+     * not charged on weekends, so it doesn't add to the total.
+     * 7/5/21 is Independence Day observed since the 4th is a Sunday. Chainsaws charge on holidays,
+     * so it adds to the total.
+     * 7/6/21 - 7/9/21 are weekdays, chainsaws charge on weekdays, so these add to the total.
+     *
+     * 5 chargeable days * 1.49 per day = 7.45 before discount.
+     * 7.45 * .75 = 5.59 discount
+     * 7.45 - 5.59 = 1.86 final charge
+     */
+    @Test
+    void spec_7_should_generateRentalAgreementString() {
+        String expected = "Tool code: CHNS\nTool type: Chainsaw\nTool brand: Stihl\n" +
+                "Rental days: 7\nCheckout date: 07/02/21\nDue date: 07/09/21\n" +
+                "Daily rental charge: $1.49\nCharge days: 5\nPre-discount charge: $7.45\n" +
+                "Discount percent: 75%\nDiscount amount: $5.59\nFinal charge: $1.86";
+
+        RentalAgreement rentalAgreement = SPEC_STORE.checkout("CHNS", 7, 75, "7/2/21");
+
+        assertEquals(expected, rentalAgreement.toString());
+    }
 }
