@@ -232,7 +232,7 @@ class StoreTest {
      * 3.98 - .4 = 3.58 final charge
      */
     @Test
-    void spec_2_shouldGenerateRentalAgreement() {
+    void spec_2_should_generateRentalAgreement() {
         RentalAgreement rentalAgreement = SPEC_STORE.checkout("LADW", 3, 10, "7/2/20");
 
         assertEquals(3.98, rentalAgreement.getPreDiscountCharge());
@@ -255,7 +255,7 @@ class StoreTest {
      * 4.47 - 1.12 = 3.35 final charge
      */
     @Test
-    void spec_3_shouldGenerateRentalAgreement() {
+    void spec_3_should_generateRentalAgreement() {
         RentalAgreement rentalAgreement = SPEC_STORE.checkout("CHNS", 5, 25, "7/2/15");
 
         assertEquals(4.47, rentalAgreement.getPreDiscountCharge());
@@ -275,12 +275,33 @@ class StoreTest {
      * No discount is applied for this rental so the final total is 8.97.
      */
     @Test
-    void spec_4_shouldGenerateRentalAgreement() {
+    void spec_4_should_generateRentalAgreement() {
         RentalAgreement rentalAgreement = SPEC_STORE.checkout("JAKD", 6, 0, "9/3/15");
 
         assertEquals(8.97, rentalAgreement.getPreDiscountCharge());
         assertEquals(0, rentalAgreement.getDiscountAmount());
         assertEquals(8.97, rentalAgreement.getFinalCharge());
         assertEquals("09/09/15", rentalAgreement.getDueDate());
+    }
+
+    /**
+     * The rental days are 7/3/15 - 7/11/15 (inclusive)
+     * 7/3/15 is Independence Day observed because the 4th is a Saturday,
+     * and jackhammers are not charged on holidays, so 7/3/20 doesn't add to the total.
+     * 7/4/15 and 7/5/15 are weekends, jackhammers are not charged on weekends, so these don't add to the total.
+     * 7/6/15 - 7/10/15 are weekdays, jackhammers charge on weekdays, so these add to the total.
+     * 7/11/15 is a weekend, jackhammers are not charged on weekends, so this doesn't add to the total.
+     *
+     * 5 chargeable days * 2.99 per day = 14.95 before discount.
+     * No discount is applied for this rental so the final total is 14.95
+     */
+    @Test
+    void spec_5_should_generateRentalAgreement() {
+        RentalAgreement rentalAgreement = SPEC_STORE.checkout("JAKR", 9, 0, "7/2/15");
+
+        assertEquals(14.95, rentalAgreement.getPreDiscountCharge());
+        assertEquals(0, rentalAgreement.getDiscountAmount());
+        assertEquals(14.95, rentalAgreement.getFinalCharge());
+        assertEquals("07/11/15", rentalAgreement.getDueDate());
     }
 }
