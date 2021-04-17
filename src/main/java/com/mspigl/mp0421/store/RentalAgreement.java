@@ -44,14 +44,14 @@ public class RentalAgreement {
 
     /**
      * Get the final charge (the difference of the pre-discount charge
-     * and the discount amount)
+     * and the discount amount rounded half up to cents)
      * @return the final charge
      */
     public double getFinalCharge() {
         double preDiscountCharge = getPreDiscountCharge();
         double discountAmount = getDiscountAmount();
 
-        return preDiscountCharge - discountAmount;
+        return Math.round((preDiscountCharge - discountAmount) * 100) / 100d;
     }
 
     public String getToolCode() {

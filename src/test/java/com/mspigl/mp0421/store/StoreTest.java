@@ -225,7 +225,7 @@ class StoreTest {
      * and ladders are not charged on holidays, so 7/3/20 doesn't add to the total.
      * 7/4/20 is a weekend (not a holiday) since Independence Day was observed the day
      * before, ladders are charged on weekends so 7/4/20 adds to the total.
-     * 7/5/20 is a weekend, ladders are charged on weekends so 7/5/20 adds  to the total.
+     * 7/5/20 is a weekend, ladders are charged on weekends so 7/5/20 adds to the total.
      *
      * 2 chargeable days * 1.99 per day = 3.98 before discount.
      * 3.98 * .1 = .40 discount
@@ -239,5 +239,28 @@ class StoreTest {
         assertEquals(.40, rentalAgreement.getDiscountAmount());
         assertEquals(3.58, rentalAgreement.getFinalCharge());
         assertEquals("07/05/20", rentalAgreement.getDueDate());
+    }
+
+    /**
+     * The rental days are 7/3/15, 7/4/15, 7/5/15, 7/6/15 and 7/7/15.
+     * 7/3/20 is Independence Day observed because the 4th is a Saturday,
+     * and chainsaws are charged on holidays, so 7/3/20 adds to the total.
+     * 7/4/20 is a weekend (not a holiday) since Independence Day was observed the day
+     * before, chainsaws are not charged on weekends so 7/4/20 doesn't add to the total.
+     * 7/5/20 is a weekend, chainsaws are not charged on weekends so 7/5/20 doesn't add to the total.
+     * 7/6/20 and 7/7/20 are weekdays, chainsaws are charged on weekdays so these days add to the total.
+     *
+     * 3 chargeable days * 1.49 per day = 4.47 before discount.
+     * 4.47 * .25 = 1.12 discount
+     * 4.47 - 1.12 = 3.35 final charge
+     */
+    @Test
+    void spec_3_shouldGenerateRentalAgreement() {
+        RentalAgreement rentalAgreement = SPEC_STORE.checkout("CHNS", 5, 25, "7/2/15");
+
+        assertEquals(4.47, rentalAgreement.getPreDiscountCharge());
+        assertEquals(1.12, rentalAgreement.getDiscountAmount());
+        assertEquals(3.35, rentalAgreement.getFinalCharge());
+        assertEquals("07/07/15", rentalAgreement.getDueDate());
     }
 }
