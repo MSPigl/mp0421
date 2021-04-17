@@ -39,7 +39,7 @@ class CatalogTest {
     }
 
     @Test
-    void should_throwException_when_ToolListIsNull() {
+    void should_throwException_when_toolListIsNull() {
         assertThrows(IllegalArgumentException.class, () -> new Catalog(null, null));
     }
 }
