@@ -26,6 +26,65 @@ public class Store {
     private final Catalog catalog;
 
     /**
+     * Determine if the input day is chargeable
+     * @param day the day to test if chargeable
+     * @param catalogItem the catalog item to compare against the day
+     * @return whether the input day is chargeable
+     */
+    static boolean isChargeableDay(LocalDate day, CatalogItem catalogItem) {
+        boolean isChargeDay;
+
+        DayOfWeek dayOfWeek = day.getDayOfWeek();
+        boolean isWeekend = dayOfWeek.equals(DayOfWeek.SATURDAY) || dayOfWeek.equals(DayOfWeek.SUNDAY);
+
+        if (isHoliday(day)) {
+            isChargeDay = catalogItem.getHolidayChargeable();
+        } else if (isWeekend) {
+            isChargeDay = catalogItem.getWeekendChargeable();
+        } else {
+            isChargeDay = catalogItem.getWeekdayChargeable();
+        }
+
+        return isChargeDay;
+    }
+
+    /**
+     * Determine if the input day is a holiday. Valid holidays are Independence Day (July 4th,
+     * observed July 3rd if 4th is a Saturday, July 5th if Sunday) and Labor Day (first Monday
+     * of September)
+     * @param day the day to test
+     * @return whether the input day is a holiday
+     */
+    static boolean isHoliday(LocalDate day) {
+        boolean isHoliday;
+
+        Month month = day.getMonth();
+
+        if (month.equals(Month.JULY)) {
+            LocalDate independenceDay = LocalDate.of(day.getYear(), Month.JULY, 4);
+            LocalDate independenceDayObserved;
+
+            if (independenceDay.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+                independenceDayObserved = independenceDay.minusDays(1);
+            } else if (independenceDay.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+                independenceDayObserved = independenceDay.plusDays(1);
+            } else {
+                independenceDayObserved = independenceDay;
+            }
+
+            isHoliday = day.getDayOfMonth() == independenceDayObserved.getDayOfMonth();
+        } else if (month.equals(Month.SEPTEMBER)) {
+            LocalDate laborDay = day.with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY));
+
+            isHoliday = day.getDayOfMonth() == laborDay.getDayOfMonth();
+        } else {
+            isHoliday = false;
+        }
+
+        return isHoliday;
+    }
+
+    /**
      * Construct a Store instance
      * @param catalog the catalog to assign to the store instance
      */
@@ -58,7 +117,7 @@ public class Store {
         for (int i = 0; i < rentalDayCount; i++) {
             localDate = localDate.plusDays(1);
 
-            if (isChargeDay(localDate, toolToRentCatalogItem)) {
+            if (isChargeableDay(localDate, toolToRentCatalogItem)) {
                 chargeDays++;
             }
         }
@@ -77,65 +136,6 @@ public class Store {
         );
 
         return rentalAgreement;
-    }
-
-    /**
-     * Determine if the input day is chargeable
-     * @param day the day to test if chargeable
-     * @param catalogItem the catalog item to compare against the day
-     * @return whether the input day is chargeable
-     */
-    boolean isChargeDay(LocalDate day, CatalogItem catalogItem) {
-        boolean isChargeDay;
-
-        DayOfWeek dayOfWeek = day.getDayOfWeek();
-        boolean isWeekend = dayOfWeek.equals(DayOfWeek.SATURDAY) || dayOfWeek.equals(DayOfWeek.SUNDAY);
-
-        if (isHoliday(day)) {
-            isChargeDay = catalogItem.getHolidayChargeable();
-        } else if (isWeekend) {
-            isChargeDay = catalogItem.getWeekendChargeable();
-        } else {
-            isChargeDay = catalogItem.getWeekdayChargeable();
-        }
-
-        return isChargeDay;
-    }
-
-    /**
-     * Determine if the input day is a holiday. Valid holidays are Independence Day (July 4th,
-     * observed July 3rd if 4th is a Saturday, July 5th if Sunday) and Labor Day (first Monday
-     * of September)
-     * @param day the day to test
-     * @return whether the input day is a holiday
-     */
-    boolean isHoliday(LocalDate day) {
-        boolean isHoliday;
-
-        Month month = day.getMonth();
-
-        if (month.equals(Month.JULY)) {
-            LocalDate independenceDay = LocalDate.of(day.getYear(), Month.JULY, 4);
-            LocalDate independenceDayObserved;
-
-            if (independenceDay.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
-                independenceDayObserved = independenceDay.minusDays(1);
-            } else if (independenceDay.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-                independenceDayObserved = independenceDay.plusDays(1);
-            } else {
-                independenceDayObserved = independenceDay;
-            }
-
-            isHoliday = day.getDayOfMonth() == independenceDayObserved.getDayOfMonth();
-        } else if (month.equals(Month.SEPTEMBER)) {
-            LocalDate laborDay = day.with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY));
-
-            isHoliday = day.getDayOfMonth() == laborDay.getDayOfMonth();
-        } else {
-            isHoliday = false;
-        }
-
-        return isHoliday;
     }
 
     /**
