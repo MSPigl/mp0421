@@ -19,6 +19,13 @@ public class RentalAgreement {
     private double dailyCharge;
 
     /**
+     * Print stringified rental agreement to console
+     */
+    public void print() {
+        System.out.println(this);
+    }
+
+    /**
      * Output all fields and calculated amounts as a string
      * @return all fields/amounts as a string
      */
